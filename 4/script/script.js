@@ -1,45 +1,49 @@
 let rootElem = document.getElementById('root');
 
+let formDiv = document.createElement('div');
 let form = document.createElement('form');
-rootElem.appendChild(form);
+formDiv.setAttribute('id', 'form-block')
+rootElem.appendChild(formDiv);
+formDiv.appendChild(form);
 form.setAttribute('id', 'form-content');
-
-let formElem = document.getElementById('form-content');
-formElem.style.paddingLeft = formElem.style.paddingRight;
 
 let postName = document.createElement('input');
 let descr = document.createElement('textarea');
 let imageUrl = document.createElement('input');
 let sourceUrl = document.createElement('input');
 let submit = document.createElement('input');
-let postNameText = document.createElement('label');
-let descrText = document.createElement('label');
-let imageText = document.createElement('label');
-let sourceText = document.createElement('label');
+let rmvAllBtn = document.createElement('input');
 
-formElem.setAttribute('name', 'main-form')
-postName.setAttribute('name', 'post-name');
+let cardsTextElem = document.createElement('h1');
+cardsTextElem.innerText = 'Your posts';
+
+form.setAttribute('name', 'main-form')
+postName.setAttribute('id', 'post-name');
+postName.setAttribute('placeholder', 'Name the post');
 descr.setAttribute('id', 'description');
+descr.setAttribute('placeholder', 'Add description');
 imageUrl.setAttribute('id', 'image-url');
+imageUrl.setAttribute('placeholder', 'Add image source');
 sourceUrl.setAttribute('id', 'source-url');
+sourceUrl.setAttribute('placeholder', 'Add source');
 submit.setAttribute('type', 'submit');
 submit.setAttribute('value', 'Create a card');
-submit.setAttribute('class', 'submit-button');
+submit.setAttribute('class', 'submit-btn');
+rmvAllBtn.setAttribute('value', 'Remove all posts');
+rmvAllBtn.setAttribute('class', 'rmv-all-btn');
+rmvAllBtn.setAttribute('type', 'button');
+rmvAllBtn.setAttribute('onclick', 'removeAllCards()');
 
-postNameText.innerText = 'Name the post:';
-formElem.appendChild(postNameText)
-postNameText.appendChild(postName);
-descrText.innerText = 'Add description:';
-formElem.appendChild(descrText);
-descrText.appendChild(descr);
-imageText.innerText = 'Give the image source:';
-formElem.appendChild(imageText);
-imageText.appendChild(imageUrl);
-sourceText.innerText = 'Add source:';
-formElem.appendChild(sourceText);
-sourceText.appendChild(sourceUrl);
+form.appendChild(postName);
+form.appendChild(descr);
+form.appendChild(imageUrl);
+form.appendChild(sourceUrl);
 
-formElem.appendChild(submit);
+form.appendChild(submit);
+form.appendChild(rmvAllBtn);
+
+rootElem.appendChild(cardsTextElem);
+
 function formSubmit() {
     let postNameValue = postName.value;
     let descrValue = description.value;
@@ -47,27 +51,50 @@ function formSubmit() {
     let srcValue = sourceUrl.value;
 
     let cardElem = document.createElement('div');
+    let cardText = document.createElement('div');
     let imgElem = document.createElement('img');
     let nameElem = document.createElement('p');
     let descrElem = document.createElement('p');
-    let srcElem = document.createElement('a');
+    let srcElem = document.createElement('button');
+    let rmvBtn = document.createElement('button');
 
     imgElem.setAttribute('src', imageValue);
     imgElem.classList.add('avatar');
     nameElem.innerText = postNameValue;
     descrElem.innerText = descrValue;
-    srcElem.setAttribute('href', srcValue);
-    srcElem.setAttribute('target', '_blank')
-    srcElem.innerText = 'link';
+    srcElem.setAttribute('onclick', `window.open('${srcValue}', '_blank')`)
+    srcElem.setAttribute('class', 'text-link')
+    srcElem.innerText = 'Read more';
+    rmvBtn.innerText = 'Remove post';
+    rmvBtn.setAttribute('class', 'rmv-btn');
+    cardElem.setAttribute('class', 'card-elem');
+    cardText.setAttribute('class', 'card-text');
 
     cardElem.appendChild(imgElem);
-    cardElem.appendChild(nameElem);
-    cardElem.appendChild(descrElem);
-    cardElem.appendChild(srcElem);
+    cardText.appendChild(nameElem);
+    cardText.appendChild(descrElem);
+    cardText.appendChild(srcElem);
+    
+    cardText.appendChild(rmvBtn);
+    rmvBtn.setAttribute('onclick', 'removeCard()');
     
     rootElem.appendChild(cardElem);
+    cardElem.appendChild(cardText);
 
     console.log('123');
+}
+
+function removeAllCards() {
+    let cards = document.getElementsByClassName('card-elem');
+    for (let card of cards) {
+        card.remove();
+        removeAllCards();
+    }
+}
+
+function removeCard() {
+    let btn = event.currentTarget;
+    btn.parentNode.parentNode.remove();
 }
 
 document.getElementById('form-content').onsubmit = function() { formSubmit(); return false };
